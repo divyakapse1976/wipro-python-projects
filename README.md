@@ -48,4 +48,4 @@ This repository is maintained to:
 
 ## 👨‍💻 Author
 
-**Deepanshu Kapse**
+**Divya Kapse**
