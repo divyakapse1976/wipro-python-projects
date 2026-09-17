@@ -1,0 +1,42 @@
+import pandas as pd
+
+# Exercise 3:
+# Import the Cars dataset and store it in the variable cars.
+# Make sure cars.csv is in the same folder.
+
+cars = pd.read_csv("cars.csv")
+
+# Inspect the first 10 rows
+print("First 10 Rows:")
+print(cars.head(10))
+
+# Print the complete DataFrame
+print("\nComplete DataFrame:")
+print(cars)
+
+# Inspect the last 5 rows
+print("\nLast 5 Rows:")
+print(cars.tail(5))
+
+# Get meta information about the DataFrame
+print("\nDataFrame Information:")
+cars.info()
+
+
+# Exercise 4:
+# Download/read the 50_startups.csv dataset
+# and perform statistical summary and correlation analysis.
+
+startups = pd.read_csv("50_startups.csv")
+
+# Display the dataset
+print("\n50 Startups Dataset:")
+print(startups)
+
+# Check the statistical summary
+print("\nStatistical Summary:")
+print(startups.describe())
+
+# Check correlation coefficient between variables
+print("\nCorrelation Matrix:")
+print(startups.corr(numeric_only=True))

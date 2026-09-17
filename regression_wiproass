@@ -1,0 +1,106 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+
+# ============================================================
+# ASSIGNMENT 1: Predict Car Price
+# Dataset: cars.csv
+# ============================================================
+
+cars = pd.read_csv("cars.csv")
+
+print("CAR DATASET")
+print(cars.head())
+print(cars.info())
+
+cars = cars.dropna()
+
+# Convert categorical columns into numerical columns
+cars = pd.get_dummies(cars, drop_first=True)
+
+X = cars.drop("price", axis=1)
+y = cars["price"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+print("\nCar Price Prediction")
+print("MAE:", mean_absolute_error(y_test, y_pred))
+print("MSE:", mean_squared_error(y_test, y_pred))
+print("RMSE:", mean_squared_error(y_test, y_pred) ** 0.5)
+print("R2 Score:", r2_score(y_test, y_pred))
+
+
+# ============================================================
+# ASSIGNMENT 2: Predict Profit
+# Dataset: 50_Startups.csv
+# ============================================================
+
+startups = pd.read_csv("50_Startups.csv")
+
+print("\n50 STARTUPS DATASET")
+print(startups.head())
+print(startups.info())
+
+startups = startups.dropna()
+
+# Handle categorical State column
+startups = pd.get_dummies(startups, columns=["State"], drop_first=True)
+
+X = startups.drop("Profit", axis=1)
+y = startups["Profit"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+print("\nProfit Prediction")
+print("MAE:", mean_absolute_error(y_test, y_pred))
+print("MSE:", mean_squared_error(y_test, y_pred))
+print("RMSE:", mean_squared_error(y_test, y_pred) ** 0.5)
+print("R2 Score:", r2_score(y_test, y_pred))
+
+
+# ============================================================
+# ASSIGNMENT 3: Predict Salary
+# Dataset: Salary_Data.csv
+# ============================================================
+
+salary = pd.read_csv("Salary_Data.csv")
+
+print("\nSALARY DATASET")
+print(salary.head())
+print(salary.info())
+
+salary = salary.dropna()
+
+X = salary[["YearsExperience"]]
+y = salary["Salary"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+print("\nSalary Prediction")
+print("MAE:", mean_absolute_error(y_test, y_pred))
+print("MSE:", mean_squared_error(y_test, y_pred))
+print("RMSE:", mean_squared_error(y_test, y_pred) ** 0.5)
+print("R2 Score:", r2_score(y_test, y_pred))

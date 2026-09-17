@@ -1,0 +1,157 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import (
+    accuracy_score,
+    confusion_matrix,
+    classification_report
+)
+
+
+# ============================================================
+# PROJECT: RATING PREDICTION
+# Dataset: yelp.csv
+#
+# Feature: Text
+# Label: Stars
+# ============================================================
+
+
+# ============================================================
+# LOAD DATA
+# ============================================================
+
+df = pd.read_csv("yelp.csv")
+
+print("First 5 Rows:")
+print(df.head())
+
+print("\nDataset Information:")
+print(df.info())
+
+print("\nMissing Values:")
+print(df.isnull().sum())
+
+
+# ============================================================
+# DATA PREPROCESSING
+# ============================================================
+
+df = df.dropna(subset=["text", "stars"])
+
+df = df.drop_duplicates()
+
+print("\nDataset Shape:")
+print(df.shape)
+
+
+# ============================================================
+# EXPLORATORY DATA ANALYSIS
+# ============================================================
+
+print("\nRating Distribution:")
+print(df["stars"].value_counts().sort_index())
+
+plt.figure(figsize=(7, 5))
+sns.countplot(x="stars", data=df)
+plt.title("Distribution of Ratings")
+plt.xlabel("Stars")
+plt.ylabel("Number of Reviews")
+plt.show()
+
+
+# ============================================================
+# FEATURES AND TARGET
+# ============================================================
+
+X = df["text"]
+y = df["stars"]
+
+
+# ============================================================
+# TRAIN TEST SPLIT
+# ============================================================
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42,
+    stratify=y
+)
+
+
+# ============================================================
+# TEXT FEATURE EXTRACTION
+# TF-IDF
+# ============================================================
+
+vectorizer = TfidfVectorizer(
+    stop_words="english",
+    max_features=5000
+)
+
+X_train_tfidf = vectorizer.fit_transform(X_train)
+
+X_test_tfidf = vectorizer.transform(X_test)
+
+
+# ============================================================
+# BUILD MODEL
+# ============================================================
+
+model = LogisticRegression(
+    max_iter=1000
+)
+
+model.fit(X_train_tfidf, y_train)
+
+
+# ============================================================
+# PREDICTION
+# ============================================================
+
+y_pred = model.predict(X_test_tfidf)
+
+
+# ============================================================
+# EVALUATION
+# ============================================================
+
+print("\n==============================")
+print("RATING PREDICTION RESULTS")
+print("==============================")
+
+print("\nAccuracy:")
+print(accuracy_score(y_test, y_pred))
+
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
+
+
+# ============================================================
+# TEST WITH NEW REVIEWS
+# ============================================================
+
+new_reviews = [
+    "The food was excellent and the service was amazing",
+    "Very bad experience, terrible food and poor service",
+    "The restaurant was okay and the food was average"
+]
+
+new_reviews_tfidf = vectorizer.transform(new_reviews)
+
+predicted_ratings = model.predict(new_reviews_tfidf)
+
+print("\nPredicted Ratings:")
+
+for review, rating in zip(new_reviews, predicted_ratings):
+    print("\nReview:", review)
+    print("Predicted Stars:", rating)

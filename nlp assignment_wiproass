@@ -1,0 +1,81 @@
+import pandas as pd
+import re
+import nltk
+
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+
+# Download required NLTK data
+nltk.download("stopwords")
+nltk.download("wordnet")
+nltk.download("omw-1.4")
+
+
+# ============================================================
+# HANDS-ON ASSIGNMENT
+# Text Preprocessing on SMSSpamCollection Dataset
+# ============================================================
+
+# Load dataset
+df = pd.read_csv(
+    "SMSSpamCollection",
+    sep="\t",
+    header=None,
+    names=["label", "message"]
+)
+
+print("Original Dataset:")
+print(df.head())
+
+print("\nDataset Information:")
+print(df.info())
+
+
+# ============================================================
+# TEXT PREPROCESSING
+# ============================================================
+
+stop_words = set(stopwords.words("english"))
+lemmatizer = WordNetLemmatizer()
+
+
+def preprocess_text(text):
+
+    # Convert to lowercase
+    text = text.lower()
+
+    # Remove punctuation and special characters
+    text = re.sub(r"[^a-zA-Z\s]", "", text)
+
+    # Tokenization
+    words = text.split()
+
+    # Remove stopwords
+    words = [
+        word for word in words
+        if word not in stop_words
+    ]
+
+    # Lemmatization
+    words = [
+        lemmatizer.lemmatize(word)
+        for word in words
+    ]
+
+    # Join words
+    return " ".join(words)
+
+
+# Apply preprocessing
+df["cleaned_message"] = df["message"].apply(preprocess_text)
+
+
+# ============================================================
+# DISPLAY RESULTS
+# ============================================================
+
+print("\nOriginal and Cleaned Text:")
+print(df[["message", "cleaned_message"]].head(10))
+
+print("\nFinal Dataset:")
+print(df.head())

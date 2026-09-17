@@ -1,0 +1,156 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import (
+    accuracy_score,
+    confusion_matrix,
+    classification_report
+)
+
+
+# ============================================================
+# PROJECT: DIABETES PREDICTION
+# Dataset: diabetes.csv
+# ============================================================
+
+df = pd.read_csv("diabetes.csv")
+
+print("First 5 rows:")
+print(df.head())
+
+print("\nDataset Information:")
+print(df.info())
+
+print("\nStatistical Summary:")
+print(df.describe())
+
+print("\nMissing Values:")
+print(df.isnull().sum())
+
+
+# ============================================================
+# DATA PREPROCESSING
+# ============================================================
+
+df = df.drop_duplicates()
+
+# In this dataset, zero values are inappropriate for these
+# medical measurements, so replace them with NaN.
+
+columns = [
+    "Glucose",
+    "BloodPressure",
+    "SkinThickness",
+    "Insulin",
+    "BMI"
+]
+
+for column in columns:
+    df[column] = df[column].replace(0, np.nan)
+    df[column] = df[column].fillna(df[column].median())
+
+
+# ============================================================
+# EXPLORATORY DATA ANALYSIS
+# ============================================================
+
+print("\nOutcome Distribution:")
+print(df["Outcome"].value_counts())
+
+plt.figure(figsize=(6, 4))
+sns.countplot(x="Outcome", data=df)
+plt.title("Diabetes Outcome Distribution")
+plt.show()
+
+plt.figure(figsize=(10, 7))
+sns.heatmap(df.corr(), annot=True, cmap="coolwarm")
+plt.title("Correlation Heatmap")
+plt.show()
+
+sns.pairplot(df, hue="Outcome")
+plt.show()
+
+
+# ============================================================
+# FEATURES AND TARGET
+# ============================================================
+
+X = df.drop("Outcome", axis=1)
+y = df["Outcome"]
+
+
+# ============================================================
+# TRAIN TEST SPLIT
+# ============================================================
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42,
+    stratify=y
+)
+
+
+# ============================================================
+# FEATURE SCALING
+# ============================================================
+
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+
+# ============================================================
+# MODEL 1: LOGISTIC REGRESSION
+# ============================================================
+
+logistic_model = LogisticRegression()
+
+logistic_model.fit(X_train, y_train)
+
+logistic_pred = logistic_model.predict(X_test)
+
+print("\n==============================")
+print("LOGISTIC REGRESSION")
+print("==============================")
+
+print("Accuracy:",
+      accuracy_score(y_test, logistic_pred))
+
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, logistic_pred))
+
+print("\nClassification Report:")
+print(classification_report(y_test, logistic_pred))
+
+
+# ============================================================
+# MODEL 2: K-NEAREST NEIGHBOUR
+# ============================================================
+
+knn_model = KNeighborsClassifier(n_neighbors=5)
+
+knn_model.fit(X_train, y_train)
+
+knn_pred = knn_model.predict(X_test)
+
+print("\n==============================")
+print("K-NEAREST NEIGHBOUR")
+print("==============================")
+
+print("Accuracy:",
+      accuracy_score(y_test, knn_pred))
+
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, knn_pred))
+
+print("\nClassification Report:")
+print(classification_report(y_test, knn_pred))

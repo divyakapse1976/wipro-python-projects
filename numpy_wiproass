@@ -1,0 +1,38 @@
+import numpy as np
+
+# Exercise 1:
+# Create a two-dimensional 3x3 array and perform
+# ndim, shape and slicing operations on it.
+
+arr_2d = np.array([
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+])
+
+print("2D Array:")
+print(arr_2d)
+
+print("Number of dimensions:", arr_2d.ndim)
+print("Shape:", arr_2d.shape)
+
+print("Sliced Array:")
+print(arr_2d[0:2, 0:2])
+
+
+# Exercise 2:
+# Create a one-dimensional array and perform
+# ndim, shape and reshape operations on it.
+
+arr_1d = np.array([1, 2, 3, 4, 5, 6])
+
+print("\n1D Array:")
+print(arr_1d)
+
+print("Number of dimensions:", arr_1d.ndim)
+print("Shape:", arr_1d.shape)
+
+reshaped_arr = arr_1d.reshape(2, 3)
+
+print("Reshaped Array:")
+print(reshaped_arr)
